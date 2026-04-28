@@ -14,7 +14,7 @@ function LoginForm() {
 console.log(res);
 
         if (!res.success) return alert(res.msg)
-        if (res?.level) return router.push(`/${res.role == "teacher" ? 'admin' : 'user'}/onboarding/set-${res.level}`)
+        if (res?.level) return window.location.href=`/${res.role == "teacher" ? 'admin' : 'user'}/onboarding/set-${res.level}`
         if (res.role == "teacher") return router.push("/admin")
         router.push("/user")
     }

@@ -54,6 +54,7 @@ import {
 } from "lucide-react";
 import { useBookmarksStore } from "@/store/bookmarks-store";
 import { collections, tags } from "@/mock-data/bookmarks";
+import { useAuthStore } from "@/store/auth.store";
 
 const collectionIcons: Record<string, React.ElementType> = {
   bookmark: Bookmark,
@@ -87,6 +88,8 @@ export function BookmarksSidebar({
     toggleTag,
     clearTags,
   } = useBookmarksStore();
+
+  const { logout, user } = useAuthStore()
 
   const isHomePage = pathname === "/user";
 
@@ -130,12 +133,13 @@ export function BookmarksSidebar({
 
               <DropdownMenuSeparator />
 
-              <DropdownMenuItem className="text-destructive">
+              <DropdownMenuItem onClick={() => logout()} className="text-destructive cursor-pointer">
                 <LogOut className="size-4 mr-2" />
                 Log out
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+
           <Avatar className="size-6.5">
             <AvatarImage src="/ln.png" />
             <AvatarFallback>LN</AvatarFallback>

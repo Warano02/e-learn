@@ -15,6 +15,7 @@ import {
   ChevronDown,
   User,
   Search,
+  LogOut,
 } from "lucide-react";
 import {
   Sidebar,
@@ -40,6 +41,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { folders } from "@/mock-data/creator-dashboard";
+import { useAuthStore } from "@/store/auth.store";
 
 const navItems = [
   { title: "Dashboard", icon: LayoutDashboard, href: "#" },
@@ -58,6 +60,7 @@ const bottomNavItems = [
 export function DashboardSidebar(
   props: React.ComponentProps<typeof Sidebar>
 ) {
+  const { logout } = useAuthStore()
   return (
     <Sidebar collapsible="offcanvas" className="!border-r-0" {...props}>
       <SidebarHeader className="px-3 py-3">
@@ -73,7 +76,7 @@ export function DashboardSidebar(
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-56">
               <DropdownMenuLabel className="text-muted-foreground text-xs font-medium">
-                Workspaces
+                Classrooms
               </DropdownMenuLabel>
               <DropdownMenuItem>
                 <Avatar className="size-5 mr-2 shrink-0">
@@ -97,6 +100,10 @@ export function DashboardSidebar(
               <DropdownMenuItem>
                 <User className="size-4 mr-2" />
                 Profile
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => logout()} className="text-destructive">
+                <LogOut className="size-4 mr-2" />
+                Log out
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -183,32 +190,6 @@ export function DashboardSidebar(
           ))}
         </SidebarMenu>
 
-        <div className="group/sidebar relative flex flex-col gap-2 rounded-lg border p-4 text-sm w-full bg-background group-data-[collapsible=icon]:hidden">
-          <div className="text-balance text-lg font-semibold leading-tight group-hover/sidebar:underline">
-            Open-source layouts by lndev-ui
-          </div>
-          <div className="text-muted-foreground">
-            Collection of beautifully crafted open-source layouts UI built with
-            shadcn/ui.
-          </div>
-          <Link
-            target="_blank"
-            rel="noreferrer"
-            className="absolute inset-0"
-            href="https://square.lndevui.com"
-          >
-            <span className="sr-only">Square by lndev-ui</span>
-          </Link>
-          <Button size="sm" className="w-full" asChild>
-            <Link
-              href="https://square.lndevui.com"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              square.lndevui.com
-            </Link>
-          </Button>
-        </div>
       </SidebarFooter>
     </Sidebar>
   );

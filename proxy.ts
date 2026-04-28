@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export async function proxy(req: NextRequest) {
+  console.log("API ", process.env.NEXT_PUBLIC_API_BASE_URL);
   const token = req.cookies.get("token")?.value;
   const { pathname } = req.nextUrl;
 
@@ -8,7 +9,7 @@ export async function proxy(req: NextRequest) {
   const isOnboardingRoute = pathname.startsWith("/onboarding");
   const isUserRoute = pathname.startsWith("/user");
   const isTeacherRoute = pathname.startsWith("/teacher");
-
+  console.log("token ", token);
   if (!token && (isUserRoute || isTeacherRoute || isOnboardingRoute))
     return NextResponse.redirect(new URL("/auth/login", req.url));
 
@@ -17,7 +18,7 @@ export async function proxy(req: NextRequest) {
   let user = null;
 
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/me`, {
       headers: {
         Cookie: `token=${token}`,
       },
@@ -33,31 +34,6 @@ export async function proxy(req: NextRequest) {
     return redirect;
   }
 
-  if (isAuthRoute) {
-    return NextResponse.redirect(new URL("/user/dashboard", req.url));
-  }
-
-  if (isOnboardingRoute && user.onboarding === 0) {
-    return NextResponse.redirect(new URL("/user/dashboard", req.url));
-  }
-
-  if (
-    (isUserRoute || isOnboardingRoute) &&
-    !["student", "teacher", "admin"].includes(user.role)
-  ) {
-    return NextResponse.redirect(new URL("/auth/login", req.url));
-  }
-
-  if (isTeacherRoute && !["teacher", "admin"].includes(user.role)) {
-    return NextResponse.redirect(new URL("/user/dashboard", req.url));
-  }
-
-  if ((isUserRoute || isTeacherRoute) && user.onboarding > 0) {
-    return NextResponse.redirect(
-      new URL(`/onboarding/step-${user.onboarding}`, req.url),
-    );
-  }
-
   return NextResponse.next();
 }
 
@@ -66,6 +42,6 @@ export const config = {
     "/auth/:path*",
     "/onboarding/:path*",
     "/user/:path*",
-    "/teacher/:path*",
+    "/admin/:path*",
   ],
 };
