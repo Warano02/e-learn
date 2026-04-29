@@ -13,21 +13,12 @@ export function DashboardHeader() {
         <SidebarTrigger className="-ml-2" />
         <div className="flex items-center gap-2">
           <Megaphone className="size-4 text-muted-foreground" />
-          <span className="text-sm font-semibold">Campaigns</span>
+          <span className="text-sm font-semibold">Hello Prof</span>
         </div>
       </div>
 
       <div className="flex items-center gap-2">
         <ThemeToggle />
-        <Button variant="ghost" size="icon" asChild className="size-8">
-          <Link
-            href="https://github.com/ln-dev7/square-ui/tree/master/templates/marketing-dashboard"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Github className="size-5" />
-          </Link>
-        </Button>
       </div>
     </header>
   );

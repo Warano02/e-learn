@@ -8,7 +8,7 @@ export async function proxy(req: NextRequest) {
   const isAuthRoute = pathname.startsWith("/auth");
   const isOnboardingRoute = pathname.startsWith("/onboarding");
   const isUserRoute = pathname.startsWith("/user");
-  const isTeacherRoute = pathname.startsWith("/teacher");
+  const isTeacherRoute = pathname.startsWith("/admin");
   console.log("token ", token);
   if (!token && (isUserRoute || isTeacherRoute || isOnboardingRoute))
     return NextResponse.redirect(new URL("/auth/login", req.url));

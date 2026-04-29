@@ -115,6 +115,7 @@ export const useAuthStore = create<UserStore>((set, get) => ({
   logout: async () => {
     try {
       await axiosInstance.post("/auth/logout");
+      window.location.href="/auth/login"
     } catch {}
 
     set({
