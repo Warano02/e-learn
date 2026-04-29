@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import axiosInstance from "@/lib/axios";
-import { AxiosResponse } from "axios";
 
 type Role = "student" | "teacher";
 
@@ -10,9 +9,7 @@ export interface User {
   email: string;
   role: Role;
   avatar: string | null;
-  onboarding: number;
-  isActive: boolean;
-  isEmailConfirmed: boolean;
+  onboarding?: number;
 }
 
 interface LoginPayload {
@@ -84,15 +81,15 @@ export const useAuthStore = create<UserStore>((set, get) => ({
     set({ loading: true });
 
     try {
-      const response = await axiosInstance.post<AxiosResponse>(
+      const { data } = await axiosInstance.post<ActionResult>(
         "/auth/login",
         payload,
       );
-      const data: ActionResult = response.data.data;
+      const { user } = data;
       console.log("data from api ", data);
 
       set({
-        user: data.user,
+        user,
         loading: false,
         initialized: true,
       });
@@ -103,6 +100,7 @@ export const useAuthStore = create<UserStore>((set, get) => ({
         role: data.role,
       };
     } catch (error: any) {
+      console.log(error);
       set({ loading: false });
 
       return {
@@ -115,7 +113,7 @@ export const useAuthStore = create<UserStore>((set, get) => ({
   logout: async () => {
     try {
       await axiosInstance.post("/auth/logout");
-      window.location.href="/auth/login"
+      window.location.href = "/auth/login";
     } catch {}
 
     set({

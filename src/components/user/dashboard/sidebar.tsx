@@ -100,9 +100,7 @@ export function BookmarksSidebar({
           <DropdownMenu>
             <DropdownMenuTrigger className="flex items-center gap-2 outline-none cursor-pointer">
               <div className="size-7 rounded-full overflow-hidden bg-linear-to-br from-blue-400 via-indigo-500 to-violet-500 flex items-center justify-center ring-1 ring-white/40 shadow-lg" />
-              <span className="font-medium text-muted-foreground">
-                Square UI
-              </span>
+              <span className="font-medium text-muted-foreground">{user?.name}</span>
               <ChevronDown className="size-3 text-muted-foreground" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-56">
@@ -140,9 +138,9 @@ export function BookmarksSidebar({
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <Avatar className="size-6.5">
-            <AvatarImage src="/ln.png" />
-            <AvatarFallback>LN</AvatarFallback>
+          <Avatar className="size-7.5 shrink-0">
+            <AvatarImage src={user?.avatar || ''} />
+            <AvatarFallback>{user?.name.slice(0,2).toLocaleUpperCase() || "UN"} </AvatarFallback>
           </Avatar>
         </div>
       </SidebarHeader>

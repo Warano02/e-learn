@@ -167,24 +167,11 @@ export function BookmarksHeader({ title = "Bookmarks" }: BookmarksHeaderProps) {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <Button size="sm" className="hidden sm:flex">
-            <Plus className="size-4" />
-            Add Bookmark
-          </Button>
-
           <Separator orientation="vertical" className="h-5 hidden sm:block" />
 
           <ThemeToggle />
 
-          <Button variant="ghost" size="icon" asChild>
-            <Link
-              href="https://github.com/ln-dev7/square-ui"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Github className="size-5" />
-            </Link>
-          </Button>
+          
         </div>
       </div>
     </header>

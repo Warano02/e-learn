@@ -60,7 +60,7 @@ const bottomNavItems = [
 export function DashboardSidebar(
   props: React.ComponentProps<typeof Sidebar>
 ) {
-  const { logout } = useAuthStore()
+  const { logout, user } = useAuthStore()
   return (
     <Sidebar collapsible="offcanvas" className="!border-r-0" {...props}>
       <SidebarHeader className="px-3 py-3">
@@ -68,10 +68,10 @@ export function DashboardSidebar(
           <DropdownMenu>
             <DropdownMenuTrigger className="flex items-center gap-2 outline-none w-full justify-start">
               <Avatar className="size-7.5 shrink-0">
-                <AvatarImage src="/ln.png" />
-                <AvatarFallback>LN</AvatarFallback>
+                <AvatarImage src={user?.avatar || ''} />
+                <AvatarFallback>{user?.name.slice(2).toLocaleUpperCase() || "UN"} </AvatarFallback>
               </Avatar>
-              <span className="text-sm font-medium">Square Marketing</span>
+              <span className="text-sm font-medium">{user?.name.split(" ")[0]} </span>
               <ChevronDown className="size-3 text-muted-foreground shrink-0" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-56">
