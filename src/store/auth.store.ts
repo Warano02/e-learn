@@ -15,6 +15,13 @@ export interface User {
 interface LoginPayload {
   email: string;
   password: string;
+  role?:string;
+}
+
+interface SignupPayload {
+  email: string;
+  password: string;
+  role?:string;
 }
 
 interface ActionResult {
@@ -33,6 +40,7 @@ interface UserStore {
   clearUser: () => void;
   fetchMe: () => Promise<void>;
   login: (payload: LoginPayload) => Promise<ActionResult>;
+  register: (payload: SignupPayload) => Promise<ActionResult>;
   logout: () => Promise<void>;
 }
 
@@ -83,6 +91,38 @@ export const useAuthStore = create<UserStore>((set, get) => ({
     try {
       const { data } = await axiosInstance.post<ActionResult>(
         "/auth/login",
+        payload,
+      );
+      const { user } = data;
+      console.log("data from api ", data);
+
+      set({
+        user,
+        loading: false,
+        initialized: true,
+      });
+
+      return {
+        success: true,
+        user: data.user,
+        role: data.role,
+      };
+    } catch (error: any) {
+      console.log(error);
+      set({ loading: false });
+
+      return {
+        success: false,
+        msg: error?.response?.data?.msg || "Login failed",
+      };
+    }
+  },
+  register: async (payload) => {
+    set({ loading: true });
+
+    try {
+      const { data } = await axiosInstance.post<ActionResult>(
+        "/auth/register",
         payload,
       );
       const { user } = data;
