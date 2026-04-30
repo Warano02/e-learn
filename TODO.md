@@ -1,0 +1,3 @@
+- View Course page
+- View Classrooms
+- Course Layout

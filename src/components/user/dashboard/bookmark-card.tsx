@@ -37,11 +37,11 @@ export function BookmarkCard({
   const bookmarkTags = allTags.filter((tag) => bookmark.tags.includes(tag.id));
 
   const handleCopyUrl = () => {
-    navigator.clipboard.writeText(bookmark.url);
+    navigator.clipboard.writeText(`${window.location.origin}/course/${bookmark.id}`);
   };
 
   const handleOpenUrl = () => {
-    window.open(bookmark.url, "_blank");
+    window.open(`/course/${bookmark.id}`, "_blank");
   };
 
   if (variant === "list") {

@@ -67,7 +67,7 @@ const collectionIcons: Record<string, React.ElementType> = {
 
 const navItems = [
   { icon: BookAIcon, label: "Course", href: "/user" },
-  { icon: House, label: "Classroom", href: "/user/classroom" },
+  { icon: House, label: "Classroom", href: "/user/classrooms" },
   { icon: Star, label: "Favorites", href: "/user/favorites" },
   { icon: Mail, label: "Inbox", href: "/user/inbox" },
   { icon: Bell, label: "Notifications", href: "/user/notifications" },
