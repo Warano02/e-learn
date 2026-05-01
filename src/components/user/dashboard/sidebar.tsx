@@ -55,6 +55,7 @@ import {
 import { useBookmarksStore } from "@/store/bookmarks-store";
 import { collections, tags } from "@/mock-data/bookmarks";
 import { useAuthStore } from "@/store/auth.store";
+import { useUserSocket } from "@/store/user-io.store";
 
 const collectionIcons: Record<string, React.ElementType> = {
   bookmark: Bookmark,
@@ -79,6 +80,7 @@ export function BookmarksSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
+  const { initSocket, disconnectSocket } = useUserSocket()
   const [collectionsOpen, setCollectionsOpen] = React.useState(true);
   const [tagsOpen, setTagsOpen] = React.useState(true);
   const {
@@ -92,7 +94,7 @@ export function BookmarksSidebar({
   const { logout, user } = useAuthStore()
 
   const isHomePage = pathname === "/user";
-
+  initSocket(user?._id || '')
   return (
     <Sidebar collapsible="offcanvas" className="lg:border-r-0!" {...props}>
       <SidebarHeader className="p-5 pb-0">
@@ -131,7 +133,7 @@ export function BookmarksSidebar({
 
               <DropdownMenuSeparator />
 
-              <DropdownMenuItem onClick={() => logout()} className="text-destructive cursor-pointer">
+              <DropdownMenuItem onClick={() => { disconnectSocket(); logout() }} className="text-destructive cursor-pointer">
                 <LogOut className="size-4 mr-2" />
                 Log out
               </DropdownMenuItem>
@@ -140,7 +142,7 @@ export function BookmarksSidebar({
 
           <Avatar className="size-7.5 shrink-0">
             <AvatarImage src={user?.avatar || ''} />
-            <AvatarFallback>{user?.name.slice(0,2).toLocaleUpperCase() || "UN"} </AvatarFallback>
+            <AvatarFallback>{user?.name.slice(0, 2).toLocaleUpperCase() || "UN"} </AvatarFallback>
           </Avatar>
         </div>
       </SidebarHeader>
