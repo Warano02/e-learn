@@ -48,8 +48,6 @@ const navItems = [
   { title: "Students", icon: Users, href: "/admin/students" },
   { title: "Virtual Rooms", icon: Video, href: "/admin/rooms" },
   { title: "Messages", icon: MessageCircle, href: "/admin/messages" },
-  { title: "Progress & Stats", icon: BarChart2, href: "/admin/stats" },
-  { title: "Resources", icon: FolderOpen, href: "/admin/resources" },
 ];
 
 const bottomNavItems = [
