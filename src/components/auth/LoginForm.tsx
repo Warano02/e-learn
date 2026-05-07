@@ -32,7 +32,7 @@ function LoginForm() {
     };
 
     return (
-        <div className="relative flex w-full flex-col justify-center px-8 py-12 lg:w-[480px] lg:min-w-[420px] lg:px-14">
+        <div className="relative flex w-full flex-col justify-center px-8 py-12 lg:w-120 lg:min-w-105 lg:px-14">
             <div className="mb-12 flex items-center gap-3">
                 <div className="h-9 w-9 animate-pulse rounded-lg bg-white/20" />
                 <span className="text-lg font-bold tracking-tight text-white">Ingenierie web</span>
@@ -49,9 +49,9 @@ function LoginForm() {
             </div>
 
             <div className="mb-7 flex items-center gap-3">
-                <Separator className="flex-1 bg-white/[0.08]" />
+                <Separator className="flex-1 bg-white/8" />
                 <span className="text-xs uppercase tracking-widest text-white/25">or</span>
-                <Separator className="flex-1 bg-white/[0.08]" />
+                <Separator className="flex-1 bg-white/8" />
             </div>
 
             {error && (
