@@ -4,3 +4,15 @@ export interface User {
 	fullName: string;
 	imageUrl: string;
 }
+
+export interface Bookmark  {
+  _id: string;
+  title: string;
+  description: string;
+  favicon: string;
+  tags: string[];
+  interests?: string[];
+  createdAt: string;
+  isFavorite: boolean;
+  hasDarkIcon?: boolean;
+};

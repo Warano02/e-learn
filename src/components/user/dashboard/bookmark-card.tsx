@@ -21,7 +21,8 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useBookmarksStore } from "@/store/bookmarks-store";
-import { tags as allTags, type Bookmark } from "@/mock-data/bookmarks";
+import { tags as allTags,  } from "@/mock-data/bookmarks";
+import { Bookmark } from "@/types";
 
 interface BookmarkCardProps {
   bookmark: Bookmark;
@@ -34,14 +35,14 @@ export function BookmarkCard({
 }: BookmarkCardProps) {
   const { toggleFavorite, archiveBookmark, trashBookmark } =
     useBookmarksStore();
-  const bookmarkTags = allTags.filter((tag) => bookmark.tags.includes(tag.id));
+  const bookmarkTags = allTags.filter((tag) => bookmark.tags.includes(tag._id));
 
   const handleCopyUrl = () => {
-    navigator.clipboard.writeText(`${window.location.origin}/course/${bookmark.id}`);
+    navigator.clipboard.writeText(`${window.location.origin}/course/${bookmark._id}`);
   };
 
   const handleOpenUrl = () => {
-    window.open(`/course/${bookmark.id}`, "_blank");
+    window.open(`/course/${bookmark._id}`, "_blank");
   };
 
   if (variant === "list") {
@@ -64,10 +65,10 @@ export function BookmarkCard({
               <div className="hidden sm:flex items-center gap-1">
                 {bookmarkTags.slice(0, 2).map((tag) => (
                   <span
-                    key={tag.id}
+                    key={tag._id}
                     className={cn(
                       "inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium",
-                      tag.color
+                     
                     )}
                   >
                     {tag.name}
@@ -82,7 +83,7 @@ export function BookmarkCard({
             )}
           </div>
           <p className="text-sm text-muted-foreground truncate">
-            {bookmark.url}
+            {} url of the course
           </p>
         </div>
 
@@ -90,7 +91,7 @@ export function BookmarkCard({
           <Button
             variant="ghost"
             size="icon-xs"
-            onClick={() => toggleFavorite(bookmark.id)}
+            onClick={() => toggleFavorite(bookmark._id)}
           >
             <Heart
               className={cn(
@@ -122,13 +123,13 @@ export function BookmarkCard({
                 Add Tags
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => archiveBookmark(bookmark.id)}>
+              <DropdownMenuItem onClick={() => archiveBookmark(bookmark._id)}>
                 <Archive className="size-4 mr-2" />
                 Archive
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="text-destructive"
-                onClick={() => trashBookmark(bookmark.id)}
+                onClick={() => trashBookmark(bookmark._id)}
               >
                 <Trash2 className="size-4 mr-2" />
                 Delete
@@ -147,7 +148,7 @@ export function BookmarkCard({
           variant="secondary"
           size="icon-xs"
           className="bg-background/80 backdrop-blur-sm"
-          onClick={() => toggleFavorite(bookmark.id)}
+          onClick={() => toggleFavorite(bookmark._id)}
         >
           <Heart
             className={cn(
@@ -184,13 +185,13 @@ export function BookmarkCard({
               Add Tags
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => archiveBookmark(bookmark.id)}>
+            <DropdownMenuItem onClick={() => archiveBookmark(bookmark._id)}>
               <Archive className="size-4 mr-2" />
               Archive
             </DropdownMenuItem>
             <DropdownMenuItem
               className="text-destructive"
-              onClick={() => trashBookmark(bookmark.id)}
+              onClick={() => trashBookmark(bookmark._id)}
             >
               <Trash2 className="size-4 mr-2" />
               Delete
@@ -226,7 +227,7 @@ export function BookmarkCard({
             <div className="flex flex-wrap gap-1 pt-1">
               {bookmarkTags.slice(0, 3).map((tag) => (
                 <span
-                  key={tag.id}
+                  key={tag._id}
                   className={cn(
                     "inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium",
                     tag.color

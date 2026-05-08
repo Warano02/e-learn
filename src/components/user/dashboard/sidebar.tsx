@@ -190,9 +190,9 @@ export function BookmarksSidebar({
                   const IconComponent =
                     collectionIcons[collection.icon] || Folder;
                   const isActive =
-                    isHomePage && selectedCollection === collection.id;
+                    isHomePage && selectedCollection === collection._id;
                   return (
-                    <SidebarMenuItem key={collection.id}>
+                    <SidebarMenuItem key={collection._id}>
                       <SidebarMenuButton
                         asChild
                         isActive={isActive}
@@ -201,7 +201,7 @@ export function BookmarksSidebar({
                         <Link
                           href="/"
                           onClick={() => {
-                            setSelectedCollection(collection.id);
+                            setSelectedCollection(collection._id);
                             clearTags();
                           }}
                         >
@@ -240,11 +240,11 @@ export function BookmarksSidebar({
               <div className="flex flex-wrap gap-1.5 mt-2">
                 {tags.map((tag) => (
                   <button
-                    key={tag.id}
-                    onClick={() => toggleTag(tag.id)}
+                    key={tag._id}
+                    onClick={() => toggleTag(tag._id)}
                     className={cn(
                       "inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium transition-colors",
-                      selectedTags.includes(tag.id)
+                      selectedTags.includes(tag._id)
                         ? "bg-primary text-primary-foreground"
                         : tag.color
                     )}

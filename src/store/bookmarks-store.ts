@@ -1,5 +1,6 @@
 import { create } from "zustand";
-import { bookmarks as initialBookmarks, type Bookmark } from "@/mock-data/bookmarks";
+import { bookmarks as initialBookmarks } from "@/mock-data/bookmarks";
+import { Bookmark } from "@/types";
 
 type ViewMode = "grid" | "list";
 type SortBy = "date-newest" | "date-oldest" | "alpha-az" | "alpha-za";
@@ -7,6 +8,7 @@ type FilterType = "all" | "favorites" | "with-tags" | "without-tags";
 
 interface BookmarksState {
   bookmarks: Bookmark[];
+  loading: boolean;
   archivedBookmarks: Bookmark[];
   trashedBookmarks: Bookmark[];
   selectedCollection: string;
@@ -35,6 +37,7 @@ interface BookmarksState {
 }
 
 export const useBookmarksStore = create<BookmarksState>((set, get) => ({
+  loading: false,
   bookmarks: initialBookmarks,
   archivedBookmarks: [],
   trashedBookmarks: [],
@@ -45,7 +48,8 @@ export const useBookmarksStore = create<BookmarksState>((set, get) => ({
   sortBy: "date-newest",
   filterType: "all",
 
-  setSelectedCollection: (collectionId) => set({ selectedCollection: collectionId }),
+  setSelectedCollection: (collectionId) =>
+    set({ selectedCollection: collectionId }),
 
   toggleTag: (tagId) =>
     set((state) => ({
@@ -67,55 +71,61 @@ export const useBookmarksStore = create<BookmarksState>((set, get) => ({
   toggleFavorite: (courseId) =>
     set((state) => ({
       bookmarks: state.bookmarks.map((bookmark) =>
-        bookmark.id === courseId
+        bookmark._id === courseId
           ? { ...bookmark, isFavorite: !bookmark.isFavorite }
-          : bookmark
+          : bookmark,
       ),
     })),
 
   archiveBookmark: (courseId) =>
     set((state) => {
-      const bookmark = state.bookmarks.find((b) => b.id === courseId);
+      const bookmark = state.bookmarks.find((b) => b._id === courseId);
       if (!bookmark) return state;
       return {
-        bookmarks: state.bookmarks.filter((b) => b.id !== courseId),
+        bookmarks: state.bookmarks.filter((b) => b._id !== courseId),
         archivedBookmarks: [...state.archivedBookmarks, bookmark],
       };
     }),
 
   restoreFromArchive: (courseId) =>
     set((state) => {
-      const bookmark = state.archivedBookmarks.find((b) => b.id === courseId);
+      const bookmark = state.archivedBookmarks.find((b) => b._id === courseId);
       if (!bookmark) return state;
       return {
-        archivedBookmarks: state.archivedBookmarks.filter((b) => b.id !== courseId),
+        archivedBookmarks: state.archivedBookmarks.filter(
+          (b) => b._id !== courseId,
+        ),
         bookmarks: [...state.bookmarks, bookmark],
       };
     }),
 
   trashBookmark: (courseId) =>
     set((state) => {
-      const bookmark = state.bookmarks.find((b) => b.id === courseId);
+      const bookmark = state.bookmarks.find((b) => b._id === courseId);
       if (!bookmark) return state;
       return {
-        bookmarks: state.bookmarks.filter((b) => b.id !== courseId),
+        bookmarks: state.bookmarks.filter((b) => b._id !== courseId),
         trashedBookmarks: [...state.trashedBookmarks, bookmark],
       };
     }),
 
   restoreFromTrash: (courseId) =>
     set((state) => {
-      const bookmark = state.trashedBookmarks.find((b) => b.id === courseId);
+      const bookmark = state.trashedBookmarks.find((b) => b._id === courseId);
       if (!bookmark) return state;
       return {
-        trashedBookmarks: state.trashedBookmarks.filter((b) => b.id !== courseId),
+        trashedBookmarks: state.trashedBookmarks.filter(
+          (b) => b._id !== courseId,
+        ),
         bookmarks: [...state.bookmarks, bookmark],
       };
     }),
 
   permanentlyDelete: (courseId) =>
     set((state) => ({
-      trashedBookmarks: state.trashedBookmarks.filter((b) => b.id !== courseId),
+      trashedBookmarks: state.trashedBookmarks.filter(
+        (b) => b._id !== courseId,
+      ),
     })),
 
   getFilteredBookmarks: () => {
@@ -123,12 +133,14 @@ export const useBookmarksStore = create<BookmarksState>((set, get) => ({
     let filtered = [...state.bookmarks];
 
     if (state.selectedCollection !== "all") {
-      filtered = filtered.filter((b) => b.collectionId === state.selectedCollection);
+      // filtered = filtered.filter(
+      //   (b) => b.collectionId === state.selectedCollection,
+      // );
     }
 
     if (state.selectedTags.length > 0) {
       filtered = filtered.filter((b) =>
-        state.selectedTags.some((tag) => b.tags.includes(tag))
+        state.selectedTags.some((tag) => b.tags.includes(tag)),
       );
     }
 
@@ -137,8 +149,7 @@ export const useBookmarksStore = create<BookmarksState>((set, get) => ({
       filtered = filtered.filter(
         (b) =>
           b.title.toLowerCase().includes(query) ||
-          b.description.toLowerCase().includes(query) ||
-          b.url.toLowerCase().includes(query)
+          b.description.toLowerCase().includes(query),
       );
     }
 
@@ -156,10 +167,16 @@ export const useBookmarksStore = create<BookmarksState>((set, get) => ({
 
     switch (state.sortBy) {
       case "date-newest":
-        filtered.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        filtered.sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+        );
         break;
       case "date-oldest":
-        filtered.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+        filtered.sort(
+          (a, b) =>
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+        );
         break;
       case "alpha-az":
         filtered.sort((a, b) => a.title.localeCompare(b.title));
@@ -181,17 +198,22 @@ export const useBookmarksStore = create<BookmarksState>((set, get) => ({
       filtered = filtered.filter(
         (b) =>
           b.title.toLowerCase().includes(query) ||
-          b.description.toLowerCase().includes(query) ||
-          b.url.toLowerCase().includes(query)
+          b.description.toLowerCase().includes(query),
       );
     }
 
     switch (state.sortBy) {
       case "date-newest":
-        filtered.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        filtered.sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+        );
         break;
       case "date-oldest":
-        filtered.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+        filtered.sort(
+          (a, b) =>
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+        );
         break;
       case "alpha-az":
         filtered.sort((a, b) => a.title.localeCompare(b.title));
@@ -213,8 +235,7 @@ export const useBookmarksStore = create<BookmarksState>((set, get) => ({
       filtered = filtered.filter(
         (b) =>
           b.title.toLowerCase().includes(query) ||
-          b.description.toLowerCase().includes(query) ||
-          b.url.toLowerCase().includes(query)
+          b.description.toLowerCase().includes(query),
       );
     }
 
@@ -230,8 +251,7 @@ export const useBookmarksStore = create<BookmarksState>((set, get) => ({
       filtered = filtered.filter(
         (b) =>
           b.title.toLowerCase().includes(query) ||
-          b.description.toLowerCase().includes(query) ||
-          b.url.toLowerCase().includes(query)
+          b.description.toLowerCase().includes(query),
       );
     }
 
