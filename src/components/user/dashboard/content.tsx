@@ -6,10 +6,10 @@ import { StatsCards } from "./stats-cards";
 
 import axios from "@/lib/axios";
 import { Bookmark } from "@/types";
-import {  useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 
-type TResponse = { classroomCourses: Bookmark[], continueCourses: Bookmark[], recommendedCourses: Bookmark[] }
+type TResponse = { classroomCourses: Bookmark[], continueCourses: Bookmark[], recommendedCourses: Bookmark[], tags: number }
 export function BookmarksContent() {
   const {
     selectedCollection,
@@ -29,34 +29,35 @@ export function BookmarksContent() {
   const fetchData = async () => {
     try {
       const res = await axios.get<TResponse>("/c")
-      console.log(data,res.data,typeof data)
-      setLoading(false)
       setData(res.data)
+      setLoading(false)
     } catch (e) {
       console.log("Error occured while trying to get courses ", e)
     }
   }
 
   useEffect(() => {
-    if (data) return
+    // if (data) return
     fetchData()
 
   }, [])
 
+
   if (loading || !data) return <LoadingContent />
   if ((data.classroomCourses.length + data.continueCourses.length + data.recommendedCourses.length) == 0) return <div className="flex-1 w-full overflow-auto">
     <div className="p-4 md:p-6 space-y-6">
-      <StatsCards />
+      <StatsCards classes={0} total={0} collection={0} tags={data.tags} />
+      <NoBookmark />
     </div>
   </div>
 
   return <div className="flex-1 w-full overflow-auto">
     <div className="p-4 md:p-6 space-y-6">
-      <StatsCards />
+      <StatsCards classes={data.classroomCourses.length} total={data.classroomCourses.length + data.continueCourses.length + data.recommendedCourses.length} collection={0} tags={data.tags} />
 
       {data.continueCourses.length > 0 && <RenderContent title="Continue your course !" data={data.continueCourses} />}
       {data.classroomCourses.length > 0 && <RenderContent title="Some course into Your ClassRooms" data={data.classroomCourses} />}
-      {data.recommendedCourses.length > 0 && <RenderContent title="POPULAR COURSES" data={data.classroomCourses} />}
+      {data.recommendedCourses.length > 0 && <RenderContent title="POPULAR COURSES" data={data.recommendedCourses} />}
 
     </div>
   </div>
@@ -64,6 +65,7 @@ export function BookmarksContent() {
 
 const RenderContent = ({ title, data }: { title: string, data: Bookmark[] }) => {
   const { viewMode } = useBookmarksStore()
+  // console.log(title,data)
   return (<div className="space-y-4">
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
       <div>
@@ -101,7 +103,20 @@ const RenderContent = ({ title, data }: { title: string, data: Bookmark[] }) => 
 const LoadingContent = () => {
   return (<div className="flex-1 w-full overflow-auto">
     <div className="p-4 md:p-6 space-y-6">
-      <StatsCards />
+
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {Array.from({ length: 4 }).map((_, index) => (
+          <div key={index} className="flex items-center gap-4 p-4 rounded-xl border bg-card animation-pulse">
+            <div className={`size-10 rounded-lg  flex items-center justify-center`}>
+              <span className="size-5" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold"></p>
+              <p className="text-sm text-muted-foreground"></p>
+            </div>
+          </div>
+        ))}
+      </div>
 
       <div className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">

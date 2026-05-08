@@ -1,4 +1,4 @@
-import { Bookmark } from "@/types";
+import { Bookmark, Tag } from "@/types";
 
 export type Collection = {
   _id: string;
@@ -8,12 +8,7 @@ export type Collection = {
   count: number;
 };
 
-export type Tag = {
-  _id: string;
-  name: string;
-  color: string;
-  count: number;
-};
+
 
 export const collections: Collection[] = [
   {

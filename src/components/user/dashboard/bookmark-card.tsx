@@ -2,26 +2,10 @@
 
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  Heart,
-  MoreHorizontal,
-  ExternalLink,
-  Copy,
-  Pencil,
-  Trash2,
-  Tag,
-  Archive,
-} from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger, } from "@/components/ui/dropdown-menu";
+import { Heart, MoreHorizontal, ExternalLink, Copy, Pencil, Trash2, Tag, Archive, } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useBookmarksStore } from "@/store/bookmarks-store";
-import { tags as allTags,  } from "@/mock-data/bookmarks";
 import { Bookmark } from "@/types";
 
 interface BookmarkCardProps {
@@ -29,14 +13,9 @@ interface BookmarkCardProps {
   variant?: "grid" | "list";
 }
 
-export function BookmarkCard({
-  bookmark,
-  variant = "grid",
-}: BookmarkCardProps) {
-  const { toggleFavorite, archiveBookmark, trashBookmark } =
-    useBookmarksStore();
-  const bookmarkTags = allTags.filter((tag) => bookmark.tags.includes(tag._id));
-
+export function BookmarkCard({ bookmark, variant = "grid" }: BookmarkCardProps) {
+  const { toggleFavorite, archiveBookmark, trashBookmark } = useBookmarksStore();
+  console.log(bookmark)
   const handleCopyUrl = () => {
     navigator.clipboard.writeText(`${window.location.origin}/course/${bookmark._id}`);
   };
@@ -61,29 +40,29 @@ export function BookmarkCard({
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <h3 className="font-medium truncate">{bookmark.title}</h3>
-            {bookmarkTags.length > 0 && (
+            {bookmark.interests.length > 0 && (
               <div className="hidden sm:flex items-center gap-1">
-                {bookmarkTags.slice(0, 2).map((tag) => (
+                {bookmark.interests.slice(0, 2).map((tag) => (
                   <span
                     key={tag._id}
                     className={cn(
                       "inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium",
-                     
+
                     )}
                   >
                     {tag.name}
                   </span>
                 ))}
-                {bookmarkTags.length > 2 && (
+                {bookmark.interests.length > 2 && (
                   <span className="text-[10px] text-muted-foreground">
-                    +{bookmarkTags.length - 2}
+                    +{bookmark.interests.length - 2}
                   </span>
                 )}
               </div>
             )}
           </div>
           <p className="text-sm text-muted-foreground truncate">
-            {} url of the course
+            { } url of the course
           </p>
         </div>
 
@@ -223,22 +202,21 @@ export function BookmarkCard({
           <p className="text-sm text-muted-foreground line-clamp-2">
             {bookmark.description}
           </p>
-          {bookmarkTags.length > 0 && (
+          {bookmark.interests.length > 0 && (
             <div className="flex flex-wrap gap-1 pt-1">
-              {bookmarkTags.slice(0, 3).map((tag) => (
+              {bookmark.interests.slice(0, 3).map((tag) => (
                 <span
                   key={tag._id}
                   className={cn(
                     "inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium",
-                    tag.color
                   )}
                 >
                   {tag.name}
                 </span>
               ))}
-              {bookmarkTags.length > 3 && (
+              {bookmark.interests.length > 3 && (
                 <span className="text-[10px] text-muted-foreground py-0.5">
-                  +{bookmarkTags.length - 3} more
+                  +{bookmark.interests.length - 3} more
                 </span>
               )}
             </div>

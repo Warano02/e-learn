@@ -2,7 +2,6 @@
 
 import { Bookmark, Star, Tag, FolderOpen } from "lucide-react";
 import { useBookmarksStore } from "@/store/bookmarks-store";
-import { collections, tags } from "@/mock-data/bookmarks";
 
 const stats = [
   {
@@ -11,8 +10,8 @@ const stats = [
     color: "bg-blue-500/10 text-blue-500",
   },
   {
-    label: "Favorites",
-    icon: Star,
+    label: "Class Course",
+    icon: FolderOpen,
     color: "bg-amber-500/10 text-amber-500",
   },
   {
@@ -27,14 +26,14 @@ const stats = [
   },
 ];
 
-export function StatsCards() {
+export function StatsCards({total,classes,collection,tags}:{total:number,classes:number,collection:number,tags:number}) {
   const { bookmarks } = useBookmarksStore();
 
   const values = [
-    bookmarks.length,
-    bookmarks.filter((b) => b.isFavorite).length,
-    collections.length - 1,
-    tags.length,
+    total,
+   classes,
+    collection,
+    tags,
   ];
 
   return (
