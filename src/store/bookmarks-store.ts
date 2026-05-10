@@ -33,7 +33,7 @@ interface BookmarksState {
   restoreFromTrash: (courseId: string) => void;
   permanentlyDelete: (courseId: string) => void;
   getFilteredBookmarks: () => Bookmark[];
-  getFavoriteBookmarks: () => Bookmark[];
+  getFavoriteBookmarks: () => Promise<Bookmark[]>;
   getArchivedBookmarks: () => Bookmark[];
   getTrashedBookmarks: () => Bookmark[];
 }
@@ -46,7 +46,7 @@ type TResponse = {
 };
 
 export const useBookmarksStore = create<BookmarksState>((set, get) => ({
-  loading: false,
+  loading: true,
   bookmarks: initialBookmarks,
   archivedBookmarks: [],
   trashedBookmarks: [],
@@ -225,41 +225,54 @@ export const useBookmarksStore = create<BookmarksState>((set, get) => ({
     return filtered;
   },
 
-  getFavoriteBookmarks: () => {
-    const state = get();
-    let filtered = state.bookmarks.filter((b) => b.isFavorite);
+  getFavoriteBookmarks: async () => {
+    try {
+      set((state) => ({ ...state, loading: true }));
 
-    if (state.searchQuery) {
-      const query = state.searchQuery.toLowerCase();
-      filtered = filtered.filter(
-        (b) =>
-          b.title.toLowerCase().includes(query) ||
-          b.description.toLowerCase().includes(query),
+      const state = get();
+      let filtered = state.bookmarks.filter((b) => b.isFavorite);
+      const {
+        data: { courses },
+      } = await axiosInstance.get<{ courses: Bookmark[] }>(
+        "/u/collections/sys/favorites",
       );
-    }
-
-    switch (state.sortBy) {
-      case "date-newest":
-        filtered.sort(
-          (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+      set((state) => ({ ...state, bookmarks: courses }));
+      if (state.searchQuery) {
+        const query = state.searchQuery.toLowerCase();
+        filtered = filtered.filter(
+          (b) =>
+            b.title.toLowerCase().includes(query) ||
+            b.description.toLowerCase().includes(query),
         );
-        break;
-      case "date-oldest":
-        filtered.sort(
-          (a, b) =>
-            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
-        );
-        break;
-      case "alpha-az":
-        filtered.sort((a, b) => a.title.localeCompare(b.title));
-        break;
-      case "alpha-za":
-        filtered.sort((a, b) => b.title.localeCompare(a.title));
-        break;
-    }
+      }
 
-    return filtered;
+      switch (state.sortBy) {
+        case "date-newest":
+          filtered.sort(
+            (a, b) =>
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+          );
+          break;
+        case "date-oldest":
+          filtered.sort(
+            (a, b) =>
+              new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+          );
+          break;
+        case "alpha-az":
+          filtered.sort((a, b) => a.title.localeCompare(b.title));
+          break;
+        case "alpha-za":
+          filtered.sort((a, b) => b.title.localeCompare(a.title));
+          break;
+      }
+
+      return filtered;
+    } catch (e) {
+      return [];
+    } finally {
+      set((state) => ({ ...state, loading: false }));
+    }
   },
 
   getArchivedBookmarks: () => {

@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger, } from "@/components/ui/dropdown-menu";
 import { Heart, MoreHorizontal, ExternalLink, Copy, Pencil, Trash2, Tag, Archive, } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useBookmarksStore } from "@/store/bookmarks-store";
 import { Bookmark } from "@/types";
 import { useState } from "react";
 import axiosInstance from "@/lib/axios";
@@ -13,14 +12,15 @@ import axiosInstance from "@/lib/axios";
 interface BookmarkCardProps {
   bookmark: Bookmark;
   variant?: "grid" | "list";
+  callback?: (id: string) => void
 }
 
-export function BookmarkCard({ bookmark, variant = "grid" }: BookmarkCardProps) {
+export function BookmarkCard({ bookmark, variant = "grid", callback }: BookmarkCardProps) {
   const [isFavorite, setIsFavorite] = useState(bookmark.isFavorite)
-
   const toggleFavorite = async () => {
     setIsFavorite(prev => !prev)
-    return axiosInstance.patch(`/u/favorites/${bookmark._id}`);
+    if (callback) callback(bookmark._id)
+    return axiosInstance.patch(`/u/collections/sys/favorites/${bookmark._id}`);
   }
 
   const handleCopyUrl = () => {
