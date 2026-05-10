@@ -19,7 +19,7 @@ const ClassRoomCard = ({ room }: { room: IClassroomCard }) => {
 
     const handleCopyUrl = () => navigator.clipboard.writeText(`${window.location.origin}/rooms/${""}`);
 
-    const handleOpenUrl = () => room.status == "active" ? window.open(`/rooms/${""}`) : "";
+    const handleOpenUrl = () => room.status == "active" ? window.open(`/rooms/${room._id}`) : "";
 
     const leftClass = async () => {
         try {
@@ -33,13 +33,13 @@ const ClassRoomCard = ({ room }: { room: IClassroomCard }) => {
     return (
         <div className={cn("group relative flex flex-col rounded-xl border bg-card overflow-hidden ", room.status == "active" && "hover:bg-accent/30 transition-colors")}>
             <div className="absolute top-3 right-3 z-10 flex items-center gap-1 justify-between w-full pl-6">
-                <button className={cn("inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium transition-colors", room.status == "banned" ? "bg-red-500" : "bg-amber-500/10 text-amber-500")}>
+                {room.status !== "active" && (<button className={cn("inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium transition-colors", room.status == "banned" ? "bg-red-500" : "bg-amber-500/10 text-amber-500")}>
                     {
                         room.status == "banned" ? "Banned" : <>
                             <span className="size-2.5 rounded-full bg-amber-500/30 animation-pulse" /> pending
                         </>
                     }
-                </button>
+                </button>)}
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="secondary" size="icon-xs" className="bg-background/80 backdrop-blur-sm">
