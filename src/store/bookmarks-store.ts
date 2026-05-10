@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { bookmarks as initialBookmarks } from "@/mock-data/bookmarks";
 import { Bookmark } from "@/types";
+import axiosInstance from "@/lib/axios";
 
 type ViewMode = "grid" | "list";
 type SortBy = "date-newest" | "date-oldest" | "alpha-az" | "alpha-za";
@@ -18,6 +19,7 @@ interface BookmarksState {
   sortBy: SortBy;
   filterType: FilterType;
   setSelectedCollection: (collectionId: string) => void;
+  fetchCourses: () => Promise<TResponse>;
   toggleTag: (tagId: string) => void;
   clearTags: () => void;
   setSearchQuery: (query: string) => void;
@@ -36,6 +38,13 @@ interface BookmarksState {
   getTrashedBookmarks: () => Bookmark[];
 }
 
+type TResponse = {
+  classroomCourses: Bookmark[];
+  continueCourses: Bookmark[];
+  recommendedCourses: Bookmark[];
+  tags: number;
+};
+
 export const useBookmarksStore = create<BookmarksState>((set, get) => ({
   loading: false,
   bookmarks: initialBookmarks,
@@ -47,6 +56,30 @@ export const useBookmarksStore = create<BookmarksState>((set, get) => ({
   viewMode: "grid",
   sortBy: "date-newest",
   filterType: "all",
+
+  fetchCourses: async () => {
+    set({ loading: true });
+    try {
+      const res = await axiosInstance.get<TResponse>("/c");
+      set({
+        loading: false,
+        bookmarks: [
+          ...res.data.classroomCourses,
+          ...res.data.continueCourses,
+          ...res.data.recommendedCourses,
+        ],
+      });
+      return res.data;
+    } catch (e) {
+      console.log("Error occured while trying to get courses ", e);
+      return {
+        classroomCourses: [],
+        recommendedCourses: [],
+        continueCourses: [],
+        tags: 0,
+      };
+    }
+  },
 
   setSelectedCollection: (collectionId) =>
     set({ selectedCollection: collectionId }),
@@ -68,14 +101,17 @@ export const useBookmarksStore = create<BookmarksState>((set, get) => ({
 
   setFilterType: (filter) => set({ filterType: filter }),
 
-  toggleFavorite: (courseId) =>
+  toggleFavorite: async (courseId) => {
     set((state) => ({
       bookmarks: state.bookmarks.map((bookmark) =>
         bookmark._id === courseId
           ? { ...bookmark, isFavorite: !bookmark.isFavorite }
           : bookmark,
       ),
-    })),
+    }));
+
+    return axiosInstance.patch(`/u/favorites/${courseId}`);
+  },
 
   archiveBookmark: (courseId) =>
     set((state) => {

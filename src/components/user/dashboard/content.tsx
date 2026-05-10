@@ -20,26 +20,17 @@ export function BookmarksContent() {
     filterType,
     setFilterType,
     sortBy,
+    loading,
+    fetchCourses
   } = useBookmarksStore();
-  const [loading, setLoading] = useState(true)
   const [data, setData] = useState<TResponse>()
 
-
-
-  const fetchData = async () => {
-    try {
-      const res = await axios.get<TResponse>("/c")
-      setData(res.data)
-      setLoading(false)
-    } catch (e) {
-      console.log("Error occured while trying to get courses ", e)
-    }
+  const f = async () => {
+    const d = await fetchCourses()
+    return setData(d)
   }
-
   useEffect(() => {
-    // if (data) return
-    fetchData()
-
+    f()
   }, [])
 
 

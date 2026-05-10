@@ -7,6 +7,8 @@ import { Heart, MoreHorizontal, ExternalLink, Copy, Pencil, Trash2, Tag, Archive
 import { cn } from "@/lib/utils";
 import { useBookmarksStore } from "@/store/bookmarks-store";
 import { Bookmark } from "@/types";
+import { useState } from "react";
+import axiosInstance from "@/lib/axios";
 
 interface BookmarkCardProps {
   bookmark: Bookmark;
@@ -14,8 +16,13 @@ interface BookmarkCardProps {
 }
 
 export function BookmarkCard({ bookmark, variant = "grid" }: BookmarkCardProps) {
-  const { toggleFavorite, archiveBookmark, trashBookmark } = useBookmarksStore();
-  console.log(bookmark)
+  const [isFavorite, setIsFavorite] = useState(bookmark.isFavorite)
+
+  const toggleFavorite = async () => {
+    setIsFavorite(prev => !prev)
+    return axiosInstance.patch(`/u/favorites/${bookmark._id}`);
+  }
+
   const handleCopyUrl = () => {
     navigator.clipboard.writeText(`${window.location.origin}/course/${bookmark._id}`);
   };
@@ -47,7 +54,7 @@ export function BookmarkCard({ bookmark, variant = "grid" }: BookmarkCardProps) 
                     key={tag._id}
                     className={cn(
                       "inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium",
-
+                      "bg-foreground/10 text-foreground"
                     )}
                   >
                     {tag.name}
@@ -70,12 +77,12 @@ export function BookmarkCard({ bookmark, variant = "grid" }: BookmarkCardProps) 
           <Button
             variant="ghost"
             size="icon-xs"
-            onClick={() => toggleFavorite(bookmark._id)}
+            onClick={() => toggleFavorite()}
           >
             <Heart
               className={cn(
                 "size-4",
-                bookmark.isFavorite && "fill-red-500 text-red-500"
+                isFavorite && "fill-red-500 text-red-500"
               )}
             />
           </Button>
@@ -99,20 +106,9 @@ export function BookmarkCard({ bookmark, variant = "grid" }: BookmarkCardProps) 
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <Tag className="size-4 mr-2" />
-                Add Tags
+                Add to collection
               </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => archiveBookmark(bookmark._id)}>
-                <Archive className="size-4 mr-2" />
-                Archive
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className="text-destructive"
-                onClick={() => trashBookmark(bookmark._id)}
-              >
-                <Trash2 className="size-4 mr-2" />
-                Delete
-              </DropdownMenuItem>
+
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
@@ -127,12 +123,12 @@ export function BookmarkCard({ bookmark, variant = "grid" }: BookmarkCardProps) 
           variant="secondary"
           size="icon-xs"
           className="bg-background/80 backdrop-blur-sm"
-          onClick={() => toggleFavorite(bookmark._id)}
+          onClick={() => toggleFavorite()}
         >
           <Heart
             className={cn(
               "size-4",
-              bookmark.isFavorite && "fill-red-500 text-red-500"
+              isFavorite && "fill-red-500 text-red-500"
             )}
           />
         </Button>
@@ -161,20 +157,9 @@ export function BookmarkCard({ bookmark, variant = "grid" }: BookmarkCardProps) 
             </DropdownMenuItem>
             <DropdownMenuItem>
               <Tag className="size-4 mr-2" />
-              Add Tags
+              Add To collectionn
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => archiveBookmark(bookmark._id)}>
-              <Archive className="size-4 mr-2" />
-              Archive
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              className="text-destructive"
-              onClick={() => trashBookmark(bookmark._id)}
-            >
-              <Trash2 className="size-4 mr-2" />
-              Delete
-            </DropdownMenuItem>
+
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
@@ -209,7 +194,7 @@ export function BookmarkCard({ bookmark, variant = "grid" }: BookmarkCardProps) 
                   key={tag._id}
                   className={cn(
                     "inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium",
-                  )}
+                    "bg-foreground/10 text-foreground")}
                 >
                   {tag.name}
                 </span>
