@@ -27,14 +27,14 @@ export function FavoritesContent() {
         {viewMode === "grid" ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {favoriteBookmarks.map((bookmark) => (
-              <BookmarkCard key={bookmark.id} bookmark={bookmark} />
+              <BookmarkCard key={bookmark._id} bookmark={bookmark} />
             ))}
           </div>
         ) : (
           <div className="flex flex-col gap-2">
             {favoriteBookmarks.map((bookmark) => (
               <BookmarkCard
-                key={bookmark.id}
+                key={bookmark._id}
                 bookmark={bookmark}
                 variant="list"
               />

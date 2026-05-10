@@ -17,15 +17,13 @@ import {
   Search,
   LayoutGrid,
   List,
-  Plus,
   SlidersHorizontal,
   ArrowUpDown,
-  Github,
   Check,
 } from "lucide-react";
 import { useBookmarksStore } from "@/store/bookmarks-store";
 import { cn } from "@/lib/utils";
-import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 interface BookmarksHeaderProps {
   title?: string;
@@ -46,20 +44,12 @@ const filterOptions = [
 ] as const;
 
 export function BookmarksHeader({ title = "Bookmarks" }: BookmarksHeaderProps) {
-  const {
-    viewMode,
-    setViewMode,
-    searchQuery,
-    setSearchQuery,
-    sortBy,
-    setSortBy,
-    filterType,
-    setFilterType,
-  } = useBookmarksStore();
+  const pathname = usePathname()
+  const { viewMode, setViewMode, searchQuery, setSearchQuery, sortBy, setSortBy, filterType, setFilterType, } = useBookmarksStore();
 
   const currentSort = sortOptions.find((opt) => opt.value === sortBy);
   const currentFilter = filterOptions.find((opt) => opt.value === filterType);
-
+  const isHome = pathname == "/user"
   return (
     <header className="w-full border-b">
       <div className="flex items-center justify-between h-14 px-4">
@@ -99,79 +89,85 @@ export function BookmarksHeader({ title = "Bookmarks" }: BookmarksHeaderProps) {
             </Button>
           </div>
 
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="hidden sm:flex">
-                <ArrowUpDown className="size-4" />
-                <span className="hidden lg:inline">{currentSort?.label.split(" ")[0]}</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-              <DropdownMenuLabel className="text-xs text-muted-foreground">
-                Sort by
-              </DropdownMenuLabel>
-              {sortOptions.map((option) => (
-                <DropdownMenuItem
-                  key={option.value}
-                  onClick={() => setSortBy(option.value)}
-                  className="flex items-center justify-between"
-                >
-                  {option.label}
-                  {sortBy === option.value && <Check className="size-4" />}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {
+            isHome && (
+              <>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm" className="hidden sm:flex">
+                      <ArrowUpDown className="size-4" />
+                      <span className="hidden lg:inline">{currentSort?.label.split(" ")[0]}</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48">
+                    <DropdownMenuLabel className="text-xs text-muted-foreground">
+                      Sort by
+                    </DropdownMenuLabel>
+                    {sortOptions.map((option) => (
+                      <DropdownMenuItem
+                        key={option.value}
+                        onClick={() => setSortBy(option.value)}
+                        className="flex items-center justify-between"
+                      >
+                        {option.label}
+                        {sortBy === option.value && <Check className="size-4" />}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
 
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                size="sm"
-                className={cn(
-                  "hidden sm:flex",
-                  filterType !== "all" && "border-primary text-primary"
-                )}
-              >
-                <SlidersHorizontal className="size-4" />
-                <span className="hidden lg:inline">
-                  {filterType !== "all" ? currentFilter?.label : "Filter"}
-                </span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-              <DropdownMenuLabel className="text-xs text-muted-foreground">
-                Filter by
-              </DropdownMenuLabel>
-              {filterOptions.map((option) => (
-                <DropdownMenuItem
-                  key={option.value}
-                  onClick={() => setFilterType(option.value)}
-                  className="flex items-center justify-between"
-                >
-                  {option.label}
-                  {filterType === option.value && <Check className="size-4" />}
-                </DropdownMenuItem>
-              ))}
-              {filterType !== "all" && (
-                <>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    onClick={() => setFilterType("all")}
-                    className="text-muted-foreground"
-                  >
-                    Clear filter
-                  </DropdownMenuItem>
-                </>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className={cn(
+                        "hidden sm:flex",
+                        filterType !== "all" && "border-primary text-primary"
+                      )}
+                    >
+                      <SlidersHorizontal className="size-4" />
+                      <span className="hidden lg:inline">
+                        {filterType !== "all" ? currentFilter?.label : "Filter"}
+                      </span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48">
+                    <DropdownMenuLabel className="text-xs text-muted-foreground">
+                      Filter by
+                    </DropdownMenuLabel>
+                    {filterOptions.map((option) => (
+                      <DropdownMenuItem
+                        key={option.value}
+                        onClick={() => setFilterType(option.value)}
+                        className="flex items-center justify-between"
+                      >
+                        {option.label}
+                        {filterType === option.value && <Check className="size-4" />}
+                      </DropdownMenuItem>
+                    ))}
+                    {filterType !== "all" && (
+                      <>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          onClick={() => setFilterType("all")}
+                          className="text-muted-foreground"
+                        >
+                          Clear filter
+                        </DropdownMenuItem>
+                      </>
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </>
+            )
+          }
 
           <Separator orientation="vertical" className="h-5 hidden sm:block" />
 
           <ThemeToggle />
 
-          
+
         </div>
       </div>
     </header>
