@@ -12,7 +12,7 @@ export default function TeacherLoginPage() {
             <TeacherLoginForm />
             <div className="relative hidden lg:flex flex-1 flex-col justify-end p-14 overflow-hidden">
                 <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=1200&q=80')" }} />
-                <div className="absolute inset-0 bg-gradient-to-bl from-black/85 via-black/50 to-black/75" />
+                <div className="absolute inset-0 bg-linear-to-bl from-black/85 via-black/50 to-black/75" />
                 <div className="relative z-10 flex flex-col gap-6">
                     <p className="max-w-md text-2xl font-light leading-relaxed text-white">Share your knowledge and shape the next generation of professionals.</p>
                     <div className="mt-6 flex items-center gap-8">

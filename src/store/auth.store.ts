@@ -15,13 +15,13 @@ export interface User {
 interface LoginPayload {
   email: string;
   password: string;
-  role?:string;
+  role?: string;
 }
 
 interface SignupPayload {
   email: string;
   password: string;
-  role?:string;
+  role?: string;
 }
 
 interface ActionResult {
@@ -69,10 +69,9 @@ export const useAuthStore = create<UserStore>((set, get) => ({
     set({ loading: true });
 
     try {
-      const { data } = await axiosInstance.get<{ user: User }>("/auth/me");
-
+     const user=JSON.parse(localStorage.getItem("user") || "null");
       set({
-        user: data.user,
+        user,
         loading: false,
         initialized: true,
       });
@@ -90,12 +89,12 @@ export const useAuthStore = create<UserStore>((set, get) => ({
 
     try {
       const { data } = await axiosInstance.post<ActionResult>(
-        "/auth/login",
+        payload.role ? "/auth/login_a" : "/auth/login",
         payload,
       );
       const { user } = data;
-      console.log("data from api ", data);
-
+      console.log("data from api ", user);
+      localStorage.setItem("user",JSON.stringify(user));
       set({
         user,
         loading: false,

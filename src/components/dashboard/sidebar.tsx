@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+
 import {
   LayoutDashboard,
   BookOpen,
@@ -41,6 +43,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/store/auth.store";
+import { useBookmarksStore } from "@/store/bookmarks-store";
+import { useUserSocket } from "@/store/user-io.store";
 
 const navItems = [
   { title: "Dashboard", icon: LayoutDashboard, href: "/admin" },
@@ -63,8 +67,10 @@ const recentCourses = [
 
 export default function adminSidebar(props: React.ComponentProps<typeof Sidebar>) {
   const { logout, user } = useAuthStore();
+    const pathname = usePathname();
+  const { initSocket, disconnectSocket } = useUserSocket()
   return (
-    <Sidebar collapsible="offcanvas" className="!border-r-0" {...props}>
+    <Sidebar collapsible="offcanvas" className="border-r-0!" {...props}>
       <SidebarHeader className="px-3 py-3">
         <div className="flex items-center justify-between w-full">
           <DropdownMenu>
@@ -113,7 +119,7 @@ export default function adminSidebar(props: React.ComponentProps<typeof Sidebar>
             <SidebarMenu>
               {navItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild isActive={item.isActive} className="h-9">
+                  <SidebarMenuButton asChild isActive={pathname==item.href} className="h-9">
                     <Link href={item.href}>
                       <item.icon className="size-4 shrink-0" />
                       <span className="text-sm">{item.title}</span>
