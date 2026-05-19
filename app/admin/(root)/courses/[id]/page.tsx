@@ -1,9 +1,11 @@
-import React from 'react'
-
-function SingleCourse() {
+import SingleCourse from './modules'
+export const metadata={
+  title:"Course Modules"
+}
+function page() {
   return (
-    <div>SingleCourse</div>
+    <SingleCourse/>
   )
 }
 
-export default SingleCourse
+export default page
