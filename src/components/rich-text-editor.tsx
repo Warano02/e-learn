@@ -27,13 +27,7 @@ interface RichTextEditorProps {
   className?: string
 }
 
-export function RichTextEditor({
-  value,
-  onChange,
-  placeholder = "Write something...",
-  minHeight = "min-h-40",
-  className,
-}: RichTextEditorProps) {
+export function RichTextEditor({ value, onChange, placeholder = "Write something...", minHeight = "min-h-40", className, }: RichTextEditorProps) {
   const editor = useEditor({
     extensions: [
       StarterKit,

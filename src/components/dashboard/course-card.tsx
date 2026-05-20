@@ -9,6 +9,7 @@ import EditCourse from "./edit-course";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 type TInterest = {
     _id: string,
@@ -20,10 +21,13 @@ export interface ICourse {
     title: string
     favicon: string
     description: string,
-    interests: TInterest[]
+    interests: TInterest[],
+    objectives:string[]
 }
 
 function CourseCard({ course }: { course: ICourse; }) {
+    const router = useRouter()
+    const [openEditor, setOpenEditor] = useState(false)
     const editor = useEditor({
         extensions: [StarterKit],
         content: course.description,
@@ -36,9 +40,7 @@ function CourseCard({ course }: { course: ICourse; }) {
         toast.success("Link copied successfully !", { position: "top-right" })
     };
 
-    const handleOpenUrl = () => {
-        window.open(`/admin/courses/${course._id}`);
-    };
+    const handleOpenUrl = () => router.push(`/admin/courses/${course._id}`)
     return (
         <div className="group relative flex flex-col rounded-xl border bg-card overflow-hidden hover:bg-accent/30 transition-colors">
             <div className="absolute top-3 right-3 z-10 flex items-center gap-1">
@@ -57,13 +59,9 @@ function CourseCard({ course }: { course: ICourse; }) {
                             <ExternalLink className="size-4 mr-2" />
                             Open in new tab
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
-                            <EditCourse course={actual} setActual={setActual}>
-                                <div className="flex gap-2 cursor-pointer">
-                                    <Pencil className="size-4 mr-2" />
-                                    Edit
-                                </div>
-                            </EditCourse>
+                        <DropdownMenuItem onClick={() => setOpenEditor(p => !p)}>
+                            <Pencil className="size-4 mr-2" />
+                            Edit
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
@@ -110,6 +108,7 @@ function CourseCard({ course }: { course: ICourse; }) {
                     )}
                 </div>
             </button>
+            <EditCourse course={actual} setActual={setActual} openEditor={openEditor} setOpen={() => setOpenEditor(p => !p)} />
         </div>
     )
 }

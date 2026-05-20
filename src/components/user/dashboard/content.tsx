@@ -3,8 +3,6 @@
 import { useBookmarksStore } from "@/store/bookmarks-store";
 import { BookmarkCard } from "./bookmark-card";
 import { StatsCards } from "./stats-cards";
-
-import axios from "@/lib/axios";
 import { Bookmark } from "@/types";
 import { useEffect, useState } from "react";
 
@@ -12,14 +10,7 @@ import { useEffect, useState } from "react";
 type TResponse = { classroomCourses: Bookmark[], continueCourses: Bookmark[], recommendedCourses: Bookmark[], tags: number }
 export function BookmarksContent() {
   const {
-    selectedCollection,
-    getFilteredBookmarks,
-    viewMode,
-    selectedTags,
-    toggleTag,
-    filterType,
-    setFilterType,
-    sortBy,
+   
     loading,
     fetchCourses
   } = useBookmarksStore();

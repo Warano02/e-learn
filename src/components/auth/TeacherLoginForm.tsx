@@ -25,6 +25,7 @@ function TeacherLoginForm() {
         if (!data.email || !data.password) return setError("All fields are required.");
         setLoading(true);
         const res = await login({ ...data, role: "teacher" });
+        console.log(res)
         setLoading(false);
         if (!res.success) return setError(res.msg || "Login failed.");
 
