@@ -4,11 +4,31 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu"
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter
+} from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { MoreHorizontal, Clock, BookOpen, Pencil, Trash2, Lock, Unlock } from "lucide-react"
+import {
+    MoreHorizontal,
+    Clock,
+    BookOpen,
+    Pencil,
+    Trash2,
+    Lock,
+    Unlock
+} from "lucide-react"
 import { cn } from "@/lib/utils"
 import axiosInstance from "@/lib/axios"
 import { toast } from "sonner"
@@ -41,14 +61,15 @@ export function ModuleCard({ courseId, module, onRenamed, onDeleted }: ModuleCar
             setRenameOpen(false)
             return
         }
+
         setRenaming(true)
         try {
-            await axiosInstance.patch(`/teacher/modules/${module._id}`, { title: newTitle.trim() })
+            await axiosInstance.patch(`/c/modules/${module._id}`, {title: newTitle.trim()})
             onRenamed(module._id, newTitle.trim())
             setRenameOpen(false)
-            toast.success("Module renamed.")
+            toast.success("Module updated")
         } catch {
-            toast.error("Failed to rename module.")
+            toast.error("Update failed")
         } finally {
             setRenaming(false)
         }
@@ -57,12 +78,12 @@ export function ModuleCard({ courseId, module, onRenamed, onDeleted }: ModuleCar
     const handleDelete = async () => {
         setDeleting(true)
         try {
-            await axiosInstance.delete(`/teacher/modules/${module._id}`)
+            await axiosInstance.delete(`/c/modules/${module._id}`)
             onDeleted(module._id)
             setDeleteOpen(false)
-            toast.success("Module deleted.")
+            toast.success("Module removed")
         } catch {
-            toast.error("Failed to delete module.")
+            toast.error("Delete failed")
         } finally {
             setDeleting(false)
         }
@@ -70,77 +91,41 @@ export function ModuleCard({ courseId, module, onRenamed, onDeleted }: ModuleCar
 
     return (
         <>
-            <Card
-                onClick={() => router.push(`/admin/courses/${courseId}/modules/${module._id}`)}
-                className={cn(
-                    "group relative overflow-hidden border bg-background/70 backdrop-blur transition-all duration-300 cursor-pointer",
-                    "hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/5 hover:border-primary/30"
-                )}
-            >
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.03] via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-
-                <CardContent className="relative p-5">
-                    <div className="flex items-start justify-between gap-3">
-                        <div className="min-w-0 flex-1 space-y-3">
-                            <div className="flex items-center gap-2">
-                                <div className="flex items-center justify-center size-8 rounded-lg bg-primary/10 text-primary text-xs font-bold shrink-0">
-                                    {String(module.order + 1).padStart(2, "0")}
-                                </div>
-
-                                <div className="min-w-0">
-                                    <div className="flex items-center gap-2">
-                                        <h3 className="text-sm font-semibold truncate">
-                                            {module.title}
-                                        </h3>
-
-                                        <div
-                                            className={cn(
-                                                "flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium",
-                                                module.isLocked
-                                                    ? "bg-orange-500/10 text-orange-500"
-                                                    : "bg-emerald-500/10 text-emerald-500"
-                                            )}
-                                        >
-                                            {module.isLocked ? (
-                                                <>
-                                                    <Lock className="size-3" />
-                                                    Locked
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <Unlock className="size-3" />
-                                                    Public
-                                                </>
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    <p className="text-xs text-muted-foreground mt-0.5">
-                                        Module overview
-                                    </p>
-                                </div>
+            <Card onClick={() => router.push(`/admin/courses/${courseId}/modules/${module._id}`) }
+                className={cn("group cursor-pointer border bg-background transition-all","hover:border-primary/30 hover:shadow-sm")} >
+                <CardContent className="p-4 space-y-3">
+                    <div className="flex items-start justify-between">
+                        <div className="flex items-start gap-3 min-w-0">
+                            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-muted text-xs font-medium">
+                                {module.order + 1}
                             </div>
 
-                            {module.description && (
-                                <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
-                                    {module.description}
-                                </p>
-                            )}
+                            <div className="min-w-0">
+                                <div className="flex items-center gap-2">
+                                    <h3 className="text-sm font-medium truncate">
+                                        {module.title}
+                                    </h3>
 
-                            <div className="flex items-center gap-2 flex-wrap pt-1">
-                                <div className="flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-1 text-xs text-muted-foreground">
-                                    <BookOpen className="size-3.5" />
-                                    <span>
-                                        {module.lessonsCount} lesson{module.lessonsCount > 1 ? "s" : ""}
+                                    <span
+                                        className={cn(
+                                            "text-[10px] px-2 py-0.5 rounded-full flex items-center gap-1",
+                                            module.isLocked
+                                                ? "bg-muted text-muted-foreground"
+                                                : "bg-primary/10 text-primary"
+                                        )}
+                                    >
+                                        {module.isLocked ? (
+                                            <Lock className="h-3 w-3" />
+                                        ) : (
+                                            <Unlock className="h-3 w-3" />
+                                        )}
+                                        {module.isLocked ? "Locked" : "Open"}
                                     </span>
                                 </div>
 
-                                {module.estimatedDuration > 0 && (
-                                    <div className="flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-1 text-xs text-muted-foreground">
-                                        <Clock className="size-3.5" />
-                                        <span>{module.estimatedDuration} min</span>
-                                    </div>
-                                )}
+                                <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">
+                                    {module.description || "No description"}
+                                </p>
                             </div>
                         </div>
 
@@ -149,16 +134,16 @@ export function ModuleCard({ courseId, module, onRenamed, onDeleted }: ModuleCar
                                 <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="size-8 shrink-0 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-200 hover:bg-muted"
+                                    className="h-8 w-8 opacity-0 group-hover:opacity-100"
                                     onClick={(e) => e.stopPropagation()}
                                 >
-                                    <MoreHorizontal className="size-4" />
+                                    <MoreHorizontal className="h-4 w-4" />
                                 </Button>
                             </DropdownMenuTrigger>
 
                             <DropdownMenuContent
                                 align="end"
-                                className="w-44 rounded-xl"
+                                className="w-40"
                                 onClick={(e) => e.stopPropagation()}
                             >
                                 <DropdownMenuItem
@@ -167,21 +152,35 @@ export function ModuleCard({ courseId, module, onRenamed, onDeleted }: ModuleCar
                                         setRenameOpen(true)
                                     }}
                                 >
-                                    <Pencil className="size-3.5 mr-2" />
+                                    <Pencil className="h-3.5 w-3.5 mr-2" />
                                     Rename
                                 </DropdownMenuItem>
 
                                 <DropdownMenuSeparator />
 
                                 <DropdownMenuItem
+                                    className="text-destructive"
                                     onClick={() => setDeleteOpen(true)}
-                                    className="text-destructive focus:text-destructive"
                                 >
-                                    <Trash2 className="size-3.5 mr-2" />
+                                    <Trash2 className="h-3.5 w-3.5 mr-2" />
                                     Delete
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
+                    </div>
+
+                    <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                        <span className="flex items-center gap-1">
+                            <BookOpen className="h-3.5 w-3.5" />
+                            {module.lessonsCount}
+                        </span>
+
+                        {module.estimatedDuration > 0 && (
+                            <span className="flex items-center gap-1">
+                                <Clock className="h-3.5 w-3.5" />
+                                {module.estimatedDuration}m
+                            </span>
+                        )}
                     </div>
                 </CardContent>
             </Card>
@@ -191,20 +190,29 @@ export function ModuleCard({ courseId, module, onRenamed, onDeleted }: ModuleCar
                     <DialogHeader>
                         <DialogTitle>Rename module</DialogTitle>
                     </DialogHeader>
-                    <div className="space-y-1.5 py-2">
-                        <Label htmlFor="module-title">Title</Label>
+
+                    <div className="space-y-2 py-2">
+                        <Label>Title</Label>
                         <Input
-                            id="module-title"
                             value={newTitle}
                             onChange={(e) => setNewTitle(e.target.value)}
                             onKeyDown={(e) => e.key === "Enter" && handleRename()}
-                            autoFocus
                         />
                     </div>
+
                     <DialogFooter>
-                        <Button variant="ghost" onClick={() => setRenameOpen(false)} disabled={renaming}>Cancel</Button>
-                        <Button onClick={handleRename} disabled={renaming || !newTitle.trim()}>
-                            {renaming ? "Saving..." : "Save"}
+                        <Button
+                            variant="ghost"
+                            onClick={() => setRenameOpen(false)}
+                            disabled={renaming}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            onClick={handleRename}
+                            disabled={renaming || !newTitle.trim()}
+                        >
+                            Save
                         </Button>
                     </DialogFooter>
                 </DialogContent>
@@ -215,13 +223,25 @@ export function ModuleCard({ courseId, module, onRenamed, onDeleted }: ModuleCar
                     <DialogHeader>
                         <DialogTitle>Delete module</DialogTitle>
                     </DialogHeader>
+
                     <p className="text-sm text-muted-foreground">
-                        Are you sure you want to delete <span className="font-medium text-foreground">"{module.title}"</span>? All lessons inside will be permanently removed.
+                        Delete <span className="text-foreground font-medium">{module.title}</span> ?
                     </p>
-                    <DialogFooter>
-                        <Button variant="ghost" onClick={() => setDeleteOpen(false)} disabled={deleting}>Cancel</Button>
-                        <Button variant="destructive" onClick={handleDelete} disabled={deleting}>
-                            {deleting ? "Deleting..." : "Delete"}
+
+                    <DialogFooter className="gap-4 flex">
+                        <Button
+                            variant="ghost"
+                            onClick={() => setDeleteOpen(false)}
+                            disabled={deleting}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            variant="destructive"
+                            onClick={handleDelete}
+                            disabled={deleting}
+                        >
+                            Delete
                         </Button>
                     </DialogFooter>
                 </DialogContent>
