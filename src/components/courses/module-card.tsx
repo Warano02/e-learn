@@ -27,7 +27,8 @@ import {
     Pencil,
     Trash2,
     Lock,
-    Unlock
+    Unlock,
+    LibraryBig
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import axiosInstance from "@/lib/axios"
@@ -64,7 +65,7 @@ export function ModuleCard({ courseId, module, onRenamed, onDeleted }: ModuleCar
 
         setRenaming(true)
         try {
-            await axiosInstance.patch(`/c/modules/${module._id}`, {title: newTitle.trim()})
+            await axiosInstance.patch(`/c/modules/${module._id}`, { title: newTitle.trim() })
             onRenamed(module._id, newTitle.trim())
             setRenameOpen(false)
             toast.success("Module updated")
@@ -91,90 +92,55 @@ export function ModuleCard({ courseId, module, onRenamed, onDeleted }: ModuleCar
 
     return (
         <>
-            <Card onClick={() => router.push(`/admin/courses/${courseId}/modules/${module._id}`) }
-                className={cn("group cursor-pointer border bg-background transition-all","hover:border-primary/30 hover:shadow-sm")} >
-                <CardContent className="p-4 space-y-3">
-                    <div className="flex items-start justify-between">
-                        <div className="flex items-start gap-3 min-w-0">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-muted text-xs font-medium">
-                                {module.order + 1}
-                            </div>
-
-                            <div className="min-w-0">
-                                <div className="flex items-center gap-2">
-                                    <h3 className="text-sm font-medium truncate">
-                                        {module.title}
-                                    </h3>
-
-                                    <span
-                                        className={cn(
-                                            "text-[10px] px-2 py-0.5 rounded-full flex items-center gap-1",
-                                            module.isLocked
-                                                ? "bg-muted text-muted-foreground"
-                                                : "bg-primary/10 text-primary"
-                                        )}
-                                    >
-                                        {module.isLocked ? (
-                                            <Lock className="h-3 w-3" />
-                                        ) : (
-                                            <Unlock className="h-3 w-3" />
-                                        )}
-                                        {module.isLocked ? "Locked" : "Open"}
-                                    </span>
-                                </div>
-
-                                <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">
-                                    {module.description || "No description"}
-                                </p>
-                            </div>
-                        </div>
-
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="h-8 w-8 opacity-0 group-hover:opacity-100"
-                                    onClick={(e) => e.stopPropagation()}
-                                >
-                                    <MoreHorizontal className="h-4 w-4" />
-                                </Button>
-                            </DropdownMenuTrigger>
-
-                            <DropdownMenuContent
-                                align="end"
-                                className="w-40"
+            <div
+                className="group relative flex flex-col rounded-xl border bg-card overflow-hidden hover:bg-accent/30 transition-colors cursor-pointer"
+                onClick={() => router.push(`/admin/courses/${courseId}/modules/${module._id}`)}
+            >
+                <div className="absolute top-3 right-3 z-10">
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button
+                                variant="secondary"
+                                size="icon"
+                                className="h-7 w-7 bg-background/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity"
                                 onClick={(e) => e.stopPropagation()}
                             >
-                                <DropdownMenuItem
-                                    onClick={() => {
-                                        setNewTitle(module.title)
-                                        setRenameOpen(true)
-                                    }}
-                                >
-                                    <Pencil className="h-3.5 w-3.5 mr-2" />
-                                    Rename
-                                </DropdownMenuItem>
-
-                                <DropdownMenuSeparator />
-
-                                <DropdownMenuItem
-                                    className="text-destructive"
-                                    onClick={() => setDeleteOpen(true)}
-                                >
-                                    <Trash2 className="h-3.5 w-3.5 mr-2" />
-                                    Delete
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                                <MoreHorizontal className="size-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-40" onClick={(e) => e.stopPropagation()}>
+                            <DropdownMenuItem onClick={() => { setNewTitle(module.title); setRenameOpen(true) }}>
+                                <Pencil className="h-3.5 w-3.5 mr-2" />
+                                Rename
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem className="text-destructive" onClick={() => setDeleteOpen(true)}>
+                                <Trash2 className="h-3.5 w-3.5 mr-2" />
+                                Delete
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
+                <div className="h-28 flex items-center justify-center bg-gradient-to-br from-primary/10 to-primary/5">
+                    <div className="size-12 rounded-xl bg-background shadow-sm flex items-center justify-center text-primary">
+                        <LibraryBig className="size-6" />
                     </div>
-
+                </div>
+                <div className="p-4 space-y-2">
+                    <div className="flex items-center gap-2">
+                        <span className="text-xs text-muted-foreground">{String(module.order + 1).padStart(2, "0")}</span>
+                        <span className={cn("text-[10px] px-2 py-0.5 rounded-full flex items-center gap-1 font-medium", module.isLocked ? "bg-muted text-muted-foreground" : "bg-primary/10 text-primary")}>
+                            {module.isLocked ? <Lock className="h-3 w-3" /> : <Unlock className="h-3 w-3" />}
+                            {module.isLocked ? "Locked" : "Open"}
+                        </span>
+                    </div>
+                    <h3 className="font-medium text-sm line-clamp-1">{module.title}</h3>
+                    <p className="text-xs text-muted-foreground line-clamp-1">{module.description || "No description"}</p>
                     <div className="flex items-center gap-3 text-xs text-muted-foreground">
                         <span className="flex items-center gap-1">
                             <BookOpen className="h-3.5 w-3.5" />
                             {module.lessonsCount}
                         </span>
-
                         {module.estimatedDuration > 0 && (
                             <span className="flex items-center gap-1">
                                 <Clock className="h-3.5 w-3.5" />
@@ -182,8 +148,8 @@ export function ModuleCard({ courseId, module, onRenamed, onDeleted }: ModuleCar
                             </span>
                         )}
                     </div>
-                </CardContent>
-            </Card>
+                </div>
+            </div>
 
             <Dialog open={renameOpen} onOpenChange={setRenameOpen}>
                 <DialogContent className="sm:max-w-sm">

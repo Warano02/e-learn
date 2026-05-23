@@ -68,7 +68,7 @@ export function Step3() {
 
         const heavy = file.size > MB_100
         setIsHeavyFile(heavy)
-        // updateData({ explicationFile: file, explicationPreviewUrl: previewUrl, explicationId: undefined })
+        updateData({ file })
         setStatus("uploading")
         setProgress(0)
         setErrorMsg("")

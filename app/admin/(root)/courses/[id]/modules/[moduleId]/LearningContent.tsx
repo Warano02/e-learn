@@ -2,7 +2,7 @@
 
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { BookOpen, FileQuestion, Clock, MoreHorizontal, Pencil, Trash2, Plus } from "lucide-react"
+import { NotebookPen, CircleHelp, FileQuestion, Clock, MoreHorizontal, Pencil, Trash2, Plus } from "lucide-react"
 
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import {
@@ -27,51 +27,6 @@ interface IModuleContain {
     duration?: number,
     questionsCount?: number
 }
-
-const mockModuleContents: IModuleContain[] = [
-    {
-        _id: "lesson-1",
-        type: "lesson",
-        title: "Welcome to the Course",
-        duration: 8
-    },
-    {
-        _id: "lesson-2",
-        type: "lesson",
-        title: "Understanding Variables and Data Types",
-        duration: 14
-    },
-    {
-        _id: "lesson-3",
-        type: "lesson",
-        title: "Functions and Parameters",
-        duration: 21
-    },
-    {
-        _id: "quiz-1",
-        type: "quiz",
-        title: "JavaScript Fundamentals Quiz",
-        questionsCount: 10
-    },
-    {
-        _id: "lesson-4",
-        type: "lesson",
-        title: "Arrays and Objects",
-        duration: 18
-    },
-    {
-        _id: "lesson-5",
-        type: "lesson",
-        title: "Async Programming Basics",
-        duration: 26
-    },
-    {
-        _id: "quiz-2",
-        type: "quiz",
-        title: "Async & Promises Assessment",
-        questionsCount: 15
-    }
-]
 
 export function ModuleContents() {
     const { moduleId, id } = useParams()
@@ -109,83 +64,59 @@ export function ModuleContents() {
         <div className="space-y-4 p-4">
             <div className="grid grid-cols-4 gap-3">
                 {contain.map((item, index) => (
-                    <Card key={item._id} className={cn("group border bg-background transition-all hover:border-primary/20 hover:shadow-sm")}>
-                        <CardContent className="p-4">
-                            <div className="flex items-start justify-between gap-4">
-                                <div onClick={() => handleOpen(item._id, item.type as "lesson" | "quiz")} className="flex flex-1 cursor-pointer items-start gap-3 min-w-0">
-                                    <div
-                                        className={cn(
-                                            "flex h-10 w-10 shrink-0 items-center justify-center rounded-lg",
-                                            item.type === "lesson" ? "bg-primary/10 text-primary" : "bg-orange-500/10 text-orange-500"
-                                        )}>
-                                        {item.type === "lesson" ? (
-                                            <BookOpen className="h-4 w-4" />
-                                        ) : (
-                                            <FileQuestion className="h-4 w-4" />
-                                        )}
-                                    </div>
-
-                                    <div className="min-w-0 flex-1">
-                                        <div className="flex items-center gap-2 flex-wrap">
-                                            <span className="text-xs text-muted-foreground">
-                                                {String(index + 1).padStart(2, "0")}
-                                            </span>
-
-                                            <div className={cn("rounded-full px-2 py-0.5 text-[10px] font-medium", item.type === "lesson" ? "bg-primary/10 text-primary" : "bg-orange-500/10 text-orange-500")}>
-                                                {item.type === "lesson" ? "Lesson" : "Quiz"}
-                                            </div>
-                                        </div>
-
-                                        <h3 className="mt-1 text-sm font-medium truncate">
-                                            {item.title}
-                                        </h3>
-
-                                        <div className="mt-2 flex items-center gap-3 text-xs text-muted-foreground">
-                                            {item.type === "lesson" &&
-                                                item.duration && (
-                                                    <div className="flex items-center gap-1">
-                                                        <Clock className="h-3.5 w-3.5" />
-                                                        <span>
-                                                            {item.duration} min
-                                                        </span>
-                                                    </div>
-                                                )}
-
-                                            {item.type === "quiz" &&
-                                                item.questionsCount && (
-                                                    <span>
-                                                        {item.questionsCount} questions
-                                                    </span>
-                                                )}
-                                        </div>
+                    <div className="group relative flex flex-col rounded-xl border bg-card overflow-hidden hover:bg-accent/30 transition-colors">
+                        <div className="absolute top-3 right-3 z-10 flex items-center gap-1">
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="secondary" size="icon" className="h-7 w-7 bg-background/80 backdrop-blur-sm">
+                                        <MoreHorizontal className="size-4" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                    <DropdownMenuItem onClick={() => handleOpen(item._id, item.type as "lesson" | "quiz")}>
+                                        <Pencil className="mr-2 h-3.5 w-3.5" />
+                                        Open
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem className="text-destructive" onClick={() => setDeleting(true)}>
+                                        <Trash2 className="mr-2 h-3.5 w-3.5" />
+                                        Delete
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </div>
+                        <button className="w-full text-left cursor-pointer" onClick={() => handleOpen(item._id, item.type as "lesson" | "quiz")}>
+                            <div className={cn("h-28 flex items-center justify-center", item.type === "lesson" ? "bg-gradient-to-br from-primary/10 to-primary/5" : "bg-gradient-to-br from-orange-500/10 to-orange-500/5")}>
+                                <div className={cn("size-12 rounded-xl bg-background shadow-sm flex items-center justify-center", item.type === "lesson" ? "text-primary" : "text-orange-500")}>
+                                    {item.type === "lesson" ? <NotebookPen className="size-6" /> : <CircleHelp className="size-6" />}
+                                </div>
+                            </div>
+                            <div className="p-4 space-y-2">
+                                <div className="flex items-center gap-2">
+                                    <span className="text-xs text-muted-foreground">{String(index + 1).padStart(2, "0")}</span>
+                                    <div className={cn("rounded-full px-2 py-0.5 text-[10px] font-medium", item.type === "lesson" ? "bg-primary/10 text-primary" : "bg-orange-500/10 text-orange-500")}>
+                                        {item.type === "lesson" ? "Lesson" : "Quiz"}
                                     </div>
                                 </div>
-
-                                <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
-                                        <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0 ">
-                                            <MoreHorizontal className="h-4 w-4" />
-                                        </Button>
-                                    </DropdownMenuTrigger>
-
-                                    <DropdownMenuContent align="end">
-                                        <DropdownMenuItem onClick={() => handleOpen(item._id, item.type as | "lesson" | "quiz")} >
-                                            <Pencil className="mr-2 h-3.5 w-3.5" />
-                                            Open
-                                        </DropdownMenuItem>
-
-                                        <DropdownMenuSeparator />
-
-                                        <DropdownMenuItem className="text-destructive" onClick={() => setDeleting(true)}>
-                                            <Trash2 className="mr-2 h-3.5 w-3.5" />
-                                            Delete
-                                        </DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
+                                <h3 className="font-medium text-sm line-clamp-1">{item.title}</h3>
+                                <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                                    {item.type === "lesson" && item.duration && (
+                                        <div className="flex items-center gap-1">
+                                            <Clock className="h-3.5 w-3.5" />
+                                            <span>{item.duration} min</span>
+                                        </div>
+                                    )}
+                                    {item.type === "quiz" && item.questionsCount && (
+                                        <div className="flex items-center gap-1">
+                                            <CircleHelp className="h-3.5 w-3.5" />
+                                            <span>{item.questionsCount} questions</span>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
-                            <DeleteElem id={item._id} isOpen={deleting} setIsOpen={setDeleting} type={item.type} />
-                        </CardContent>
-                    </Card>
+                        </button>
+                        <DeleteElem id={item._id} isOpen={deleting} setIsOpen={setDeleting} type={item.type} />
+                    </div>
                 ))}
             </div>
 

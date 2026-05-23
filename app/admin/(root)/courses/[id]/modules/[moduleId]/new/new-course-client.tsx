@@ -17,7 +17,7 @@ const stepComponents = {
     3: Step3,
 }
 function NewCourseClient() {
-    const { moduleId } = useParams()
+    const { moduleId,id } = useParams()
     const { step, nextStep, prevStep, data, reset } = useCreateLesson()
     const [loading, setLoading] = useState(false)
     const router = useRouter()
@@ -25,10 +25,10 @@ function NewCourseClient() {
     const handleSubmit = async () => {
         setLoading(true)
         try {
-            const { data: { lesson } } = await axiosInstance.post(`/c/modules/${moduleId}/lesson`)
+            const { data: { lesson } } = await axiosInstance.post(`/c/modules/${moduleId}/lesson`,data)
             toast("Lesson created successfully !")
             console.log(lesson)
-            router.replace(`/admin/courses/modules/${moduleId}`)
+            router.replace(`/admin/courses/${id}/modules/${moduleId}`)
         } catch (e) {
             console.error("Error occured while trying to publish lesson :", e)
             toast.error("Error occured while trying to publish lesson !")
