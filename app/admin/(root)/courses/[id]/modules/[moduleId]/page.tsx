@@ -1,7 +1,10 @@
+import { ModuleContents } from "./LearningContent"
+
+
 
 function SinglemModule() {
   return (
-    <div>SinglemModule</div>
+    <ModuleContents />
   )
 }
 
