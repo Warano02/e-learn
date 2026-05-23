@@ -1,3 +1,4 @@
+import GroupChatPage from "@/components/classrooms/chat"
 import { Metadata } from "next"
 
 export const metadata: Metadata = {
@@ -6,7 +7,7 @@ export const metadata: Metadata = {
 
 function MessagesClassRoom() {
   return (
-    <div>MessagesClassRoom</div>
+    <GroupChatPage />
   )
 }
 
